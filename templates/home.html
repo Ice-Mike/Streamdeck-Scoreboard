@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 50px;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+        .holder {
+            position: fixed;
+            height: 10vmin;
+            width: 90vmax;
+            left: 50%;
+            bottom: 2%;
+            transform: translate(-50%, -50%);
+            background-color: blue;
+            border-radius: 35px;
+        }
+        .score {
+            position: absolute;
+            text-align: center;
+            width: 10vmin;
+            line-height: 10vmin;
+            background-color: red;
+        }
+        .player1_score {
+            left: 0;
+            border-radius: 25px 0 0 25px;
+        }
+        .player2_score {
+            right: 0;
+            border-radius: 0 25px 25px 0;
+        }
+        .name {
+            position: absolute;
+            text-align: center;
+            width: 30vmax;
+            line-height: 10vmin;
+        }
+        .player1_name {
+            left: 10vmin;
+        }
+        .player2_name {
+            right: 10vmin;
+        }
+        .round {
+            position: absolute;
+            text-align: center;
+            left: 65vmin;
+            width: 30vmin;
+            line-height: 10vmin;
+        }
+    </style>
+    <body>
+        <div class="holder">
+            <div class="score player1_score" id="players_1s">0</div>
+            <div class="name player1_name" id="players_1">Team 1</div>
+            <div class="round" id="round">(Round 1)</div>
+            <div class="name player2_name" id="players_2">Team 2</div>
+            <div class="score player2_score" id="players_2s">0</div>
+        </div>
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+        var socket = io('http://localhost:5000', {
+            'reconnection': true,
+            'reconnectionDelay': 250,
+            'reconnectionDelayMax': 250,
+            'reconnectionAttempts': 1000000
+        });
+        socket.emit('update_req','pls');
+        socket.on('update', function(event) {
+            document.getElementById("players_1s").innerHTML = event['scores']['player 1 score'];
+            if (event['scores']['player 1 ball']) {
+                document.getElementById("players_1").innerHTML = "• "+event['scores']['player 1'];
+            }
+            else {
+                document.getElementById("players_1").innerHTML = event['scores']['player 1'];
+            }
+            document.getElementById("round").innerHTML = "("+event['round']+")";
+            if (event['scores']['player 2 ball']) {
+                document.getElementById("players_2").innerHTML = "• "+event['scores']['player 2'];
+            }
+            else {
+                document.getElementById("players_2").innerHTML = event['scores']['player 2'];
+            }
+            document.getElementById("players_2s").innerHTML = event['scores']['player 2 score'];
+        });
+    </script>
+</html>
